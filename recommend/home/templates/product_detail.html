@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | Recommendation System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #f8f9fc;
+            --accent-color: #36b9cc;
+            --text-color: #5a5c69;
+            --card-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        
+        body {
+            background-color: #f8f9fc;
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 20px;
+        }
+        
+        .container-main {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .breadcrumb {
+            background-color: transparent;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+        
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .product-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .product-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .product-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .product-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2ecc71;
+            margin-bottom: 1.5rem;
+        }
+        
+        .product-description {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            color: #5a5c69;
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 2rem 0 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 50%;
+            height: 2px;
+            background: var(--accent-color);
+        }
+        
+        .similar-product {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .similar-product:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0.5rem 1.5rem rgba(58, 59, 69, 0.2);
+        }
+        
+        .similar-product img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin-right: 1.2rem;
+            border-radius: 6px;
+            border: 1px solid #eaecf4;
+        }
+        
+        .similar-product-details {
+            flex: 1;
+        }
+        
+        .similar-product-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.4rem;
+            font-size: 1.1rem;
+        }
+        
+        .similar-product-price {
+            font-weight: 700;
+            color: #2ecc71;
+            margin-bottom: 0.5rem;
+        }
+        
+        .similar-product-description {
+            font-size: 0.9rem;
+            color: #5a5c69;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+        
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            color: var(--primary-color);
+        }
+        
+        .back-button {
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .back-button:hover {
+            color: #3a59c7;
+        }
+        
+        .back-button i {
+            margin-right: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .similar-product {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .similar-product img {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+        }
+        
+        .view-count {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container container-main">
+        <!-- Back Button -->
+        <a href="/" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back to All Products
+        </a>
+        
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/">Products</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Product Details</li>
+            </ol>
+        </nav>
+
+        <!-- Product Details Section -->
+        <div class="product-container">
+            <div id="product-loading" class="loading-spinner">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <div id="product" style="display: none;"></div>
+        </div>
+
+        <!-- Similar Products Section -->
+        <h2 class="section-title">Recommended For You</h2>
+        <div id="similar-loading" class="loading-spinner">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div id="similar-products" style="display: none;"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Fetch API data
+        async function fetchProductData() {
+            try {
+                // Extract product ID from URL
+                const pathParts = window.location.pathname.split('/');
+                const productId = pathParts[pathParts.length - 2]; // Get the ID from the URL
+                
+                const response = await fetch(`http://127.0.0.1:8000/product/${productId}/`);
+                const data = await response.json();
+                
+                // Hide loading spinners
+                document.getElementById('product-loading').style.display = 'none';
+                document.getElementById('similar-loading').style.display = 'none';
+                
+                // Show content
+                document.getElementById('product').style.display = 'block';
+                document.getElementById('similar-products').style.display = 'block';
+                
+                displayProduct(data.product);
+                displaySimilarProducts(data.similar_products);
+                
+                // Record view activity for recommendations
+                recordProductView(productId);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('product-loading').innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-exclamation-triangle fa-3x mb-3 text-danger"></i>
+                        <h4 class="text-danger">Failed to load product details</h4>
+                        <p class="text-muted">Please check your connection and try again</p>
+                        <button class="btn btn-outline-primary mt-2" onclick="fetchProductData()">Retry</button>
+                    </div>
+                `;
+                
+                document.getElementById('similar-loading').innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-exclamation-triangle fa-3x mb-3 text-danger"></i>
+                        <h4 class="text-danger">Failed to load recommendations</h4>
+                    </div>
+                `;
+            }
+        }
+
+        // Record product view for recommendation system
+        function recordProductView(productId) {
+            fetch(`http://127.0.0.1:8000/activity/?product_id=${productId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Activity recorded for product:', productId);
+                    // Update view count if available in response
+                    if (data.views_count) {
+                        const viewCountElement = document.getElementById('view-count');
+                        if (viewCountElement) {
+                            viewCountElement.textContent = `Viewed ${data.views_count} times`;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error recording activity:', error);
+                });
+        }
+
+        // Display main product
+        function displayProduct(product) {
+            const productContainer = document.getElementById('product');
+            productContainer.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="${product.product_image}" alt="${product.name}" class="product-image">
+                    </div>
+                    <div class="col-md-6">
+                        <h1 class="product-title">${product.name}</h1>
+                        <div class="product-price">₹${product.price}</div>
+                        <p class="product-description">${product.description || 'No description available for this product.'}</p>
+                        <div class="view-count" id="view-count"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Display similar products
+        function displaySimilarProducts(products) {
+            const similarProductsContainer = document.getElementById('similar-products');
+            
+            if (products && products.length > 0) {
+                similarProductsContainer.innerHTML = products.map(product => `
+                    <a href="/product_detail/${product.id}" style="text-decoration: none;">
+                        <div class="similar-product">
+                            <img src="${product.product_image}" alt="${product.name}">
+                            <div class="similar-product-details">
+                                <h3 class="similar-product-title">${product.name}</h3>
+                                <div class="similar-product-price">₹${product.price}</div>
+                                <p class="similar-product-description">${product.description || 'No description available'}</p>
+                            </div>
+                        </div>
+                    </a>
+                `).join('');
+            } else {
+                similarProductsContainer.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-info-circle fa-3x mb-3 text-secondary"></i>
+                        <h4 class="text-muted">No recommendations available yet</h4>
+                        <p class="text-muted">Continue browsing to get personalized recommendations</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Trigger API call on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchProductData();
+        });
+    </script>
+</body>
+</html>
